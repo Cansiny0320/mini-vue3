@@ -1,0 +1,17 @@
+  
+{
+  "compilerOptions": {
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "target": "ES2015",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": false,
+    "downlevelIteration": true,
+    "lib": ["es6", "DOM"],
+    "outDir": "dist"
+  },
+  "include": ["packages/index.ts"]
+}

@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "start": "tsc && node ./dist/index.js"
+  }
+}
