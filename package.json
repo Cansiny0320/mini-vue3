@@ -5,7 +5,7 @@
   },
   "scripts": {
     "start": "tsc && node ./dist/index.js",
-    "test": "parcel ./demo/reactivity/index.html"
+    "test:reactivity": "parcel ./demo/reactivity/index.html"
   },
   "dependencies": {
     "packages": "^0.0.8"
