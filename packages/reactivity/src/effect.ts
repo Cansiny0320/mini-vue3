@@ -27,6 +27,8 @@ function createReactiveEffect<T = any>(fn: () => T): ReactiveEffect<T> {
       try {
         effectStack.push(effect) // 可能有 effect 中调用另一个 effect 的情况，模拟一个栈来处理
         activeEffect = effect
+        // 立即执行一遍 fn()
+        // fn() 执行过程会完成依赖收集，会用到 track
         return fn()
       } finally {
         // 完成依赖收集后从池子中扔掉这个 effect
