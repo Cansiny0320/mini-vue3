@@ -38,5 +38,3 @@ function createSetter() {
     return result
   }
 }
-
-console.log(isObject(0))
