@@ -101,7 +101,7 @@ export function trigger(target: object, type: TriggerOpTypes, key?: unknown) {
 
   // iteration key on ADD | Map.SET
   switch (type) {
-    case (TriggerOpTypes.ADD, TriggerOpTypes.SET):
+    case TriggerOpTypes.ADD:
       add(depsMap.get(isArray(target) ? "length" : ITERATE_KEY))
       break
     case TriggerOpTypes.SET:
