@@ -1,4 +1,4 @@
-import { isArray, isMap } from "../../shared"
+import { isArray, isIntegerKey } from "../../shared"
 import { TrackOpTypes, TriggerOpTypes } from "./operations"
 type Dep = Set<ReactiveEffect>
 type KeyToDepMap = Map<any, Dep>
@@ -102,13 +102,7 @@ export function trigger(target: object, type: TriggerOpTypes, key?: unknown) {
   // iteration key on ADD | Map.SET
   switch (type) {
     case TriggerOpTypes.ADD:
-      add(depsMap.get(isArray(target) ? "length" : ITERATE_KEY))
-      break
-    case TriggerOpTypes.SET:
-      if (isMap(target)) {
-        add(depsMap.get(ITERATE_KEY))
-      }
-      break
+      if (isArray(target) && isIntegerKey(key)) add(depsMap.get("length"))
   }
   // 简化版 scheduleRun，挨个执行 effect
   effects.forEach(effect => {
