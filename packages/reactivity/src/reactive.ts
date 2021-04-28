@@ -12,7 +12,14 @@ export function createReactiveObject(target: object, handler: ProxyHandler<any>)
     console.warn(`${target} is not object!`)
     return target
   }
+  // 已经有了对应的 proxy
+  const existingProxy = reactiveMap.get(target)
+  if (existingProxy) {
+    return existingProxy
+  }
   const observed = new Proxy(target, handler)
   reactiveMap.set(target, observed)
+  console.log(reactiveMap)
+
   return observed
 }
