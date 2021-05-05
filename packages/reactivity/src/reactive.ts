@@ -19,7 +19,5 @@ export function createReactiveObject(target: object, handler: ProxyHandler<any>)
   }
   const observed = new Proxy(target, handler)
   reactiveMap.set(target, observed)
-  console.log(reactiveMap)
-
   return observed
 }

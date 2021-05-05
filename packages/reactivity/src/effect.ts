@@ -22,19 +22,17 @@ export function effect<T = any>(fn: () => T) {
 
 function createReactiveEffect<T = any>(fn: () => T): ReactiveEffect<T> {
   const effect = function reactiveEffect(): unknown {
-    if (!effectStack.includes(effect)) {
-      cleanup(effect) // effect 调用时会清除上一轮的依赖，防止本轮触发多余的依赖
-      try {
-        effectStack.push(effect) // 可能有 effect 中调用另一个 effect 的情况，模拟一个栈来处理
-        activeEffect = effect
-        // 立即执行一遍 fn()
-        // fn() 执行过程会完成依赖收集，会用到 track
-        return fn()
-      } finally {
-        // 完成依赖收集后从池子中扔掉这个 effect
-        effectStack.pop()
-        activeEffect = effectStack[effectStack.length - 1]
-      }
+    cleanup(effect) // 防止 fn() 中含有 if 等条件判断语句导致依赖不同。所以每次执行函数时，都要重新更新一次依赖。
+    try {
+      effectStack.push(effect) // 将本effect推到effect栈中
+      activeEffect = effect
+      // 立即执行一遍 fn()
+      // fn() 执行过程会完成依赖收集，会用到 track
+      return fn()
+    } finally {
+      // 执行完以后将effect从栈中推出
+      effectStack.pop()
+      activeEffect = effectStack[effectStack.length - 1]
     }
   } as ReactiveEffect
   effect.deps = [] // 收集对应的 dep，cleanup 时以找到 dep，从 dep 中清除 effect
