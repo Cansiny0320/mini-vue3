@@ -1,4 +1,4 @@
-import { hasOwn, isObject } from "../../shared"
+import { hasOwn, isObject, isSymbol } from "../../shared"
 import { track, trigger } from "./effect"
 import { TrackOpTypes, TriggerOpTypes } from "./operations"
 import { reactive } from "./reactive"
@@ -11,9 +11,21 @@ export const handler = {
   set,
 }
 
+// 内置方法
+const builtInSymbols = new Set(
+  Object.getOwnPropertyNames(Symbol)
+    .map(key => (Symbol as any)[key])
+    .filter(isSymbol),
+)
+
 function createGetter() {
   return function get(target: object, key: string | symbol, receiver: object): any {
     const res = Reflect.get(target, key, receiver)
+    console.log(key)
+    // 内置方法不做依赖收集
+    if (isSymbol(key) && builtInSymbols.has(key as symbol)) {
+      return res
+    }
     track(target, TrackOpTypes.GET, key)
     return isObject(res) ? reactive(res) : res
   }

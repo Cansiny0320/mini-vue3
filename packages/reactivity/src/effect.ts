@@ -63,12 +63,9 @@ export function track(target: object, type: TrackOpTypes, key: string | symbol) 
   }
 
   if (!dep.has(activeEffect)) {
-    /*
-    dep 到 effect 是为了 trigger 使用，
-    而 effect 到 dep 是为了 effect 调用时找到依赖于这个 effect 所有 dep，
-    从 dep 中删除这个调用过的 effect，用来清除上一轮的依赖，防止本轮触发多余的依赖 
-    */
+    // 将activeEffect add到集合dep中，供 trigger 调用
     dep.add(activeEffect)
+    // 并在effect的deps中也push这个effects集合dep 供cleanup清除上一轮的依赖，防止本轮触发多余的依赖
     activeEffect.deps.push(dep)
   }
 }
@@ -84,8 +81,7 @@ export function trigger(target: object, type: TriggerOpTypes, key?: unknown) {
   const add = (effectsToAdd: Set<ReactiveEffect> | undefined) => {
     if (effectsToAdd) {
       effectsToAdd.forEach(effect => {
-        // 不要添加自己当前的 effect，否则之后 run（mutate）的时候
-        // 遇到 effect(() => foo.value++) 会导致无限循环
+        // 不要添加自己当前的 effect，否则遇到 effect(() => foo.value++) 会导致无限循环
         if (effect !== activeEffect) {
           effects.add(effect)
         }
@@ -94,12 +90,14 @@ export function trigger(target: object, type: TriggerOpTypes, key?: unknown) {
   }
   // SET | ADD
   if (key !== undefined) {
+    // 添加key对应的effect
     add(depsMap.get(key))
   }
 
   // iteration key on ADD | Map.SET
   switch (type) {
     case TriggerOpTypes.ADD:
+      // 增加数组元素会改变数组长度
       if (isArray(target) && isIntegerKey(key)) add(depsMap.get("length"))
   }
   // 简化版 scheduleRun，挨个执行 effect
