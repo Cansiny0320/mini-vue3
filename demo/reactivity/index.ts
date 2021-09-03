@@ -1,18 +1,16 @@
-import { reactive, effect } from "../../packages/reactivity/index"
-const $inc = document.querySelector(".inc")
-const $dec = document.querySelector(".dec")
-const $count = document.querySelector(".count")
+import { reactive, effect } from '../../packages/reactivity/index'
+const input = document.querySelector('input')
+const p = document.querySelector('p')
 
-const state = reactive({ count: 0 })
-state.text = "+1"
+const state = reactive({ text: '' })
 effect(() => {
-  $count.innerHTML = state.count
-  $inc.innerHTML = state.text
+  p.textContent = state.text
+  input.value = state.text
 })
-$inc.addEventListener("click", () => {
-  state.count++
-  state.text = "+2"
+input.addEventListener('input', () => {
+  state.text = input.value
 })
-$dec.addEventListener("click", () => {
-  state.count--
-})
+
+setTimeout(() => {
+  state.text = '123'
+}, 1000)
