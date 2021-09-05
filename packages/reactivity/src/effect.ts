@@ -1,5 +1,5 @@
-import { isArray, isIntegerKey } from "../../shared"
-import { TrackOpTypes, TriggerOpTypes } from "./operations"
+import { isArray, isIntegerKey } from '../../shared'
+import { TrackOpTypes, TriggerOpTypes } from './operations'
 type Dep = Set<ReactiveEffect>
 type KeyToDepMap = Map<any, Dep>
 const targetMap = new WeakMap<any, KeyToDepMap>()
@@ -12,7 +12,7 @@ export interface ReactiveEffect<T = any> {
 const effectStack: ReactiveEffect[] = []
 let activeEffect: ReactiveEffect | undefined
 
-export const ITERATE_KEY = Symbol("")
+export const ITERATE_KEY = Symbol('iterate')
 
 export function effect<T = any>(fn: () => T) {
   const effect = createReactiveEffect(fn)
@@ -47,7 +47,29 @@ function cleanup(effect: ReactiveEffect) {
   }
 }
 
-export function track(target: object, type: TrackOpTypes, key: string | symbol) {
+let shouldTrack = true
+const trackStack: boolean[] = []
+
+export function pauseTracking() {
+  trackStack.push(shouldTrack)
+  shouldTrack = false
+}
+
+export function enableTracking() {
+  trackStack.push(shouldTrack)
+  shouldTrack = true
+}
+
+export function resetTracking() {
+  const last = trackStack.pop()
+  shouldTrack = last === undefined ? true : last
+}
+
+export function track(
+  target: object,
+  type: TrackOpTypes,
+  key: string | symbol
+) {
   if (activeEffect === undefined) {
     return
   }
@@ -98,7 +120,7 @@ export function trigger(target: object, type: TriggerOpTypes, key?: unknown) {
   switch (type) {
     case TriggerOpTypes.ADD:
       // 增加数组元素会改变数组长度
-      if (isArray(target) && isIntegerKey(key)) add(depsMap.get("length"))
+      if (isArray(target) && isIntegerKey(key)) add(depsMap.get('length'))
   }
   // 简化版 scheduleRun，挨个执行 effect
   effects.forEach(effect => {
