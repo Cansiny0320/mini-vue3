@@ -123,9 +123,9 @@ function createSetter() {
     // 这里一定要先执行 set 后再 trigger，effect 中可能有操作依赖于 set 后的对象，先 set 能保证 effect 中的函数执行出正确的结果
     const result = Reflect.set(target, key, value, receiver)
     if (!hadKey) {
-      trigger(target, TriggerOpTypes.ADD, key, value)
+      trigger(target, TriggerOpTypes.ADD, key)
     } else if (hasChanged(value, oldValue)) {
-      trigger(target, TriggerOpTypes.SET, key, value, oldValue)
+      trigger(target, TriggerOpTypes.SET, key)
     }
     return result
   }
@@ -133,10 +133,9 @@ function createSetter() {
 
 function deleteProperty(target: object, key: string | symbol): boolean {
   const hadKey = hasOwn(target, key)
-  const oldValue = (target as any)[key]
   const result = Reflect.deleteProperty(target, key)
   if (result && hadKey) {
-    trigger(target, TriggerOpTypes.DELETE, key, undefined, oldValue)
+    trigger(target, TriggerOpTypes.DELETE, key)
   }
   return result
 }
