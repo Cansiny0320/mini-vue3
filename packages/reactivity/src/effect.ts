@@ -1,6 +1,16 @@
 import { isArray, isIntegerKey } from '../../shared'
 import { TrackOpTypes, TriggerOpTypes } from './operations'
+
+// 整个响应式系统的数据结构如下
+// 首先是 targetMap 存的是 {target（也就是原对象） -> 其对应的 KeyToDepMap}
+// KeyToDepMap 则存放了{target 中被 track 过的 key -> Dep}
+// Dep 中就是这个 key 对应的 effects
+// 这些 effects 中也存放了它们自己对应的 key
+// 形成了 key <-> effect
+// 图示：https://cansiny.oss-cn-shanghai.aliyuncs.com/images/1630843079966.png
+
 type Dep = Set<ReactiveEffect>
+
 type KeyToDepMap = Map<any, Dep>
 const targetMap = new WeakMap<any, KeyToDepMap>()
 
