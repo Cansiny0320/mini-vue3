@@ -1,4 +1,4 @@
-import { reactive, isReactive, toRaw } from '../src/reactive'
+import { reactive, isReactive, toRaw, isProxy } from '../src/reactive'
 import { effect } from '../src/effect'
 
 describe('reactivity/reactive', () => {
@@ -14,6 +14,13 @@ describe('reactivity/reactive', () => {
     expect('foo' in observed).toBe(true)
     // ownKeys
     expect(Object.keys(observed)).toEqual(['foo'])
+  })
+
+  test('get', () => {
+    const original = { foo: 1 }
+    const observed = reactive(original)
+    expect(isProxy(observed)).toBe(true)
+    expect(isProxy({ ...observed })).toBe(false)
   })
 
   test('nested reactives', () => {
