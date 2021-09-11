@@ -5,13 +5,13 @@ export function h(type: any, propsOrChildren?: any, children?: any) {
   const l = arguments.length
   if (l === 2) {
     if (isObject(propsOrChildren) && !isArray(propsOrChildren)) {
-      // single vnode without props
+      // 单独的 vnode 无 props
       if (isVNode(propsOrChildren)) {
         return createVNode(type, null, [propsOrChildren])
       }
       return createVNode(type, propsOrChildren)
     } else {
-      // omit props
+      // 无 props
       return createVNode(type, null, propsOrChildren)
     }
   } else {
