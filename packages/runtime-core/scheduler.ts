@@ -18,7 +18,6 @@ function queueFlush() {
     resolvedPromise.then(() => {
       isFlushing = true
       try {
-        // TODO: 这里用 for-each，queueJob while flushing 测试过不了，不知道为什么
         for (const job of queue) {
           job()
         }
